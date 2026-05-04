@@ -1,39 +1,32 @@
-import { Mastra } from '@mastra/core/mastra';
+import { Mastra } from '@mastra/core';
 import { PinoLogger } from '@mastra/loggers';
 import { LibSQLStore } from '@mastra/libsql';
-import { DuckDBStore } from "@mastra/duckdb";
-import { MastraCompositeStore } from '@mastra/core/storage';
-import { Observability, DefaultExporter, CloudExporter, SensitiveDataFilter } from '@mastra/observability';
+import { LangSmithExporter } from '@mastra/langsmith';
+import { Observability } from '@mastra/observability';
 import { chatAgent } from './agents/chatAgent';
+import { reasoningAgent } from './agents/reasoningAgent';
+import { weatherAgent } from './agents/weather-agent';
 
 export const mastra = new Mastra({
-  agents: { chatAgent },
-  storage: new MastraCompositeStore({
-    id: 'composite-storage',
-    default: new LibSQLStore({
-      id: "mastra-storage",
-      url: "file:./mastra.db",
-    }),
-    domains: {
-      observability: await new DuckDBStore().getStore('observability'),
-    }
+  agents: { chatAgent, reasoningAgent, weatherAgent },
+  storage: new LibSQLStore({
+    id: "mastra-storage",
+    url: "file:./mastra.db",
   }),
   logger: new PinoLogger({
     name: 'Mastra',
-    level: 'info',
+    level: (process.env.LOG_LEVEL as any) || 'info',
   }),
   observability: new Observability({
     configs: {
-      default: {
-        serviceName: 'mastra',
+      langsmith: {
+        serviceName: 'agentic-mastra-bot',
         exporters: [
-          new DefaultExporter(), // Persists traces to storage for Mastra Studio
-          new CloudExporter(), // Sends observability data to hosted Mastra Studio (if MASTRA_CLOUD_ACCESS_TOKEN is set)
-        ],
-        spanOutputProcessors: [
-          new SensitiveDataFilter(), // Redacts sensitive data like passwords, tokens, keys
+          new LangSmithExporter({
+            apiKey: process.env.LANGSMITH_API_KEY,
+          }),
         ],
       },
     },
-  }),
+  })
 });

@@ -11,7 +11,7 @@ export default function Home() {
   const [activeThreadId, setActiveThreadId] = useState<Id<"threads"> | null>(
     null
   );
-  const createThread = useMutation(api.threads.create);
+  const createThread = useMutation((api as any).threads.create);
 
   const handleNewThread = async () => {
     const id = await createThread({});
@@ -23,13 +23,15 @@ export default function Home() {
   };
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex min-h-screen w-full bg-background overflow-hidden">
       <Sidebar
         activeThreadId={activeThreadId}
         onSelectThread={handleSelectThread}
         onNewThread={handleNewThread}
       />
-      <ChatArea threadId={activeThreadId} />
+      <main className="flex-1 flex flex-col h-full relative">
+        <ChatArea threadId={activeThreadId} />
+      </main>
     </div>
   );
 }

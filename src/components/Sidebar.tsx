@@ -20,7 +20,7 @@ export function Sidebar({
   onSelectThread,
   onNewThread,
 }: SidebarProps) {
-  const threads = useQuery(api.threads.list) ?? [];
+  const threads = useQuery((api as any).threads.list) ?? [];
 
   return (
     <div className="flex h-full w-64 flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border">
@@ -48,7 +48,7 @@ export function Sidebar({
               No conversations yet
             </p>
           )}
-          {threads.map((thread) => (
+          {threads.map((thread: any) => (
             <button
               key={thread._id}
               id={`thread-${thread._id}`}
