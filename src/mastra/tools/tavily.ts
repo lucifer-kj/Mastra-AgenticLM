@@ -7,14 +7,14 @@ export const tavilySearch = createTool({
   inputSchema: z.object({
     query: z.string().describe("The search query"),
   }),
-  execute: async ({ context }) => {
+  execute: async ({ query }) => {
     try {
       const response = await fetch("https://api.tavily.com/search", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           api_key: process.env.TAVILY_API_KEY,
-          query: context.query,
+          query: query,
           search_depth: "basic",
         }),
       });

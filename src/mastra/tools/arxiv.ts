@@ -7,9 +7,9 @@ export const arxivSearch = createTool({
   inputSchema: z.object({
     query: z.string().describe("The search query for ArXiv"),
   }),
-  execute: async ({ context }) => {
+  execute: async ({ query }) => {
     try {
-      const url = `http://export.arxiv.org/api/query?search_query=all:${encodeURIComponent(context.query)}&start=0&max_results=3`;
+      const url = `http://export.arxiv.org/api/query?search_query=all:${encodeURIComponent(query)}&start=0&max_results=3`;
       const response = await fetch(url);
       const data = await response.text();
       return { data };
