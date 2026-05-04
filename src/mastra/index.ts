@@ -1,17 +1,13 @@
-
 import { Mastra } from '@mastra/core/mastra';
 import { PinoLogger } from '@mastra/loggers';
 import { LibSQLStore } from '@mastra/libsql';
 import { DuckDBStore } from "@mastra/duckdb";
 import { MastraCompositeStore } from '@mastra/core/storage';
 import { Observability, DefaultExporter, CloudExporter, SensitiveDataFilter } from '@mastra/observability';
-import { weatherWorkflow } from './workflows/weather-workflow';
-import { weatherAgent } from './agents/weather-agent';
-
+import { chatAgent } from './agents/chatAgent';
 
 export const mastra = new Mastra({
-  workflows: { weatherWorkflow },
-  agents: { weatherAgent },
+  agents: { chatAgent },
   storage: new MastraCompositeStore({
     id: 'composite-storage',
     default: new LibSQLStore({
