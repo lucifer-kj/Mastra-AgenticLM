@@ -49,3 +49,11 @@ project_guidelines.md
 .agents/
 .claude/
 skills-lock.json
+
+# Mastra Databases
+mastra.db*
+mastra.duckdb*
+
+# Playwright
+playwright-report/
+test-results/
