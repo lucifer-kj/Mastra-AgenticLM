@@ -1,0 +1,39 @@
+{
+  "name": "ai-app-002",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@mastra/core": "^1.31.0",
+    "@mastra/duckdb": "^1.2.0",
+    "@mastra/libsql": "^1.9.1",
+    "@mastra/loggers": "^1.1.1",
+    "@mastra/memory": "^1.17.4",
+    "@mastra/observability": "^1.11.0",
+    "ai": "^6.0.174",
+    "clsx": "^2.1.1",
+    "convex": "^1.37.0",
+    "lucide-react": "^1.14.0",
+    "mastra": "^1.7.3",
+    "next": "16.2.4",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "tailwind-merge": "^3.5.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.4",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
