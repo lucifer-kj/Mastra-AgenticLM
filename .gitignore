@@ -44,3 +44,8 @@ next-env.d.ts
 AGENTS.md
 CLAUDE.md
 project_guidelines.md
+
+# AI specific directories and files
+.agents/
+.claude/
+skills-lock.json
