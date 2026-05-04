@@ -1,9 +1,9 @@
 "use client";
 
-import { useChat } from "@ai-sdk/react";
+import { useChat, Message } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { useEffect, useRef, useState } from "react";
-import { useMutation } from "convex/react";
+import { useEffect, useRef, useState, useMemo } from "react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
@@ -62,10 +62,23 @@ function ThoughtProcess({ content, state }: { content: string; state?: string })
 
 export function ChatArea({ threadId }: ChatAreaProps) {
   const createMessage = useMutation((api as any).messages.create);
+  const historicalMessages = useQuery((api as any).messages.list, threadId ? { threadId } : "skip") as any[];
+
+  const initialMessages = useMemo(() => {
+    if (!historicalMessages) return [];
+    return historicalMessages.map((msg) => ({
+      id: msg._id,
+      role: msg.role as Message["role"],
+      content: msg.content,
+      createdAt: new Date(msg.createdAt),
+    })) as Message[];
+  }, [historicalMessages]);
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState("");
 
-  const { messages, sendMessage, status, error: chatError } = useChat({
+  const { messages, setMessages, sendMessage, status, error: chatError } = useChat({
+    initialMessages,
     transport: new DefaultChatTransport({
       api: "/api/chat",
     }),
@@ -97,6 +110,12 @@ export function ChatArea({ threadId }: ChatAreaProps) {
   });
 
   const isStreaming = status === "streaming" || status === "submitted";
+
+  useEffect(() => {
+    if (initialMessages.length > 0 && messages.length === 0) {
+       setMessages(initialMessages);
+    }
+  }, [initialMessages, setMessages, messages.length]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -144,6 +163,13 @@ export function ChatArea({ threadId }: ChatAreaProps) {
 
   return (
     <div className="flex flex-1 h-full flex-col bg-background relative overflow-hidden">
+      {/* Mobile Header Spacer */}
+      <div className="h-16 md:hidden flex items-center px-4 border-b bg-background/80 backdrop-blur-sm sticky top-0 z-30">
+        <span className="ml-10 text-sm font-semibold truncate">
+          {threadId ? "Conversation" : "New Chat"}
+        </span>
+      </div>
+
       {/* Messages Viewport */}
       <ScrollArea ref={scrollRef} className="flex-1 w-full">
         <div className="mx-auto max-w-3xl px-4 py-12 space-y-8">
@@ -154,6 +180,23 @@ export function ChatArea({ threadId }: ChatAreaProps) {
                 <h3 className="text-xl font-semibold tracking-tight">How can I help you today?</h3>
                 <p className="text-sm">AgenticLM can search the web, research papers, and reason deeply.</p>
               </div>
+            </div>
+          )}
+
+          {chatError && (
+            <div className="mx-auto max-w-2xl p-4 mb-8 rounded-xl border border-destructive/20 bg-destructive/5 text-destructive text-sm flex items-center gap-3">
+              <div className="flex-1">
+                <p className="font-bold uppercase tracking-widest text-[10px] mb-1">Error Occurred</p>
+                <p>I&apos;m having trouble connecting to the brain right now. Please try again or check your connection.</p>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 border-destructive/20 hover:bg-destructive/10 text-destructive"
+                onClick={() => window.location.reload()}
+              >
+                Retry
+              </Button>
             </div>
           )}
 

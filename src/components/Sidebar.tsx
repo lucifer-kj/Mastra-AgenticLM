@@ -19,11 +19,12 @@ export function Sidebar({
   activeThreadId,
   onSelectThread,
   onNewThread,
-}: SidebarProps) {
+  className,
+}: SidebarProps & { className?: string }) {
   const threads = useQuery((api as any).threads.list) ?? [];
 
   return (
-    <div className="flex h-full w-64 flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border">
+    <div className={cn("flex h-full w-64 flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border", className)}>
       {/* Header */}
       <div className="flex items-center justify-between p-4">
         <h2 className="text-sm font-semibold tracking-tight">AgenticLM</h2>
